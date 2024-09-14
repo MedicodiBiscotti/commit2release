@@ -28,7 +28,7 @@ Annotated vs. lightweight might require some different strategies as lightweight
 ## Features
 
 - [x] Basic functionality.
-- [ ] Option to skip pause.
+- [x] Option to skip pause.
 - [ ] Only process down to given commit.
 - [ ] Option to use annotated/lightweight tags.
 - [ ] More intelligent handling of release title.

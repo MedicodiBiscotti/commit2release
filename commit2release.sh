@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# Options
+prompt=true;
+while getopts y opt; do
+    case $opt in
+        y) prompt=false;;
+    esac
+done
+
 pattern='^v?\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest
@@ -10,7 +18,9 @@ done
 # Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
 
 # When first writing the commits, I got some of the versions wrong. Fix manually at this stage.
-read -p "Check everything is correct, fix mistakes, then PRESS ENTER to continue."
+if $prompt; then
+    read -p "Check everything is correct, fix mistakes, then PRESS ENTER to continue."
+fi
 
 git push --tags
 
