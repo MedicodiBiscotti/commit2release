@@ -19,17 +19,18 @@ Script works like this:
 
 Script runs through commits in chronological order and overwrites existing tags, meaning if you had multiple commits with same version, the latest (most recent) commit gets the tag.
 
-Git lists tags in alphabetical order, so if your commits' versions are out of order, the releases will be too. Unfortunately, this also means `v1.2` comes before `v1.2-alpha`.
+Git lists tags in alphabetical order, so if your commits' versions are out of order, the releases will be too. Unfortunately, this also means `v1.2` comes before `v1.2-alpha`. We can also list in order of creation.
 
 By default, the script pauses to let you inspect the tags it created and make sure everything is correct before continuing.
 
-Theoretically, we could fix the ordering issue by creating a release immediately, but then you lose the ability to inspect changes and overwrite same version names. Unless you pause for every single one and ask whether to release or not.
+Annotated vs. lightweight might require some different strategies as lightweight doesn't have the same amount of data associated.
 
 ## Features
 
 - [x] Basic functionality.
 - [ ] Option to skip pause.
-- [ ] Option to use annotated tags.
+- [ ] Only process down to given commit.
+- [ ] Option to use annotated/lightweight tags.
 - [ ] More intelligent handling of release title.
 
 ## Requirements
