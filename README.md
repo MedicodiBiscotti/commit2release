@@ -21,7 +21,13 @@ Script runs through commits in chronological order and overwrites existing tags,
 
 Git lists tags in alphabetical order, so if your commits' versions are out of order, the releases will be too. Unfortunately, this also means `v1.2` comes before `v1.2-alpha`. We can also list in order of creation.
 
-By default, the script pauses to let you inspect the tags it created and make sure everything is correct before continuing.
+By default, the script pauses to let you inspect the tags it created and make sure everything is correct before continuing. One thing to fix is tag names or which commits are tagged. Another is the tag message if annotated. Editing a tag in place is not possible, but this alias is a close approximation. It creates a new tag with the message of the old one, opening it in the default text editor for you to edit further.
+
+```shell
+git config --global alias.te '!git tag -l --format='%(contents)' $1 | git tag -aefF - $1 && :'
+```
+
+Remember, **this is destructive**. It will delete the existing tag and create a new one. Probably don't use this on tags that have been pushed and/or have releases based on them.
 
 Annotated vs. lightweight might require some different strategies as lightweight doesn't have the same amount of data associated.
 
