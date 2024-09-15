@@ -27,6 +27,10 @@ By default, the script pauses to let you inspect the tags it created and make su
 git config --global alias.te '!git tag -l --format='%(contents)' $1 | git tag -aefF - $1 && :'
 ```
 
+If script outputs `Updated tag '<version> (was <hash>)` then it overwrote an existing tag. It's possible that you have multiple commits with the same version which needs fixing. If using annotated tags and rerunning the script, this will always be the case as it creates a new object every time, so it's less indicative then.
+
+The pause also allows you to exit out with `CTRL+C` if you don't want to continue. This behavior could change in the future to a `Y/n` prompt.
+
 Remember, **this is destructive**. It will delete the existing tag and create a new one. Probably don't use this on tags that have been pushed and/or have releases based on them.
 
 Annotated vs. lightweight might require some different strategies as lightweight doesn't have the same amount of data associated.
@@ -34,7 +38,7 @@ Annotated vs. lightweight might require some different strategies as lightweight
 ## Features
 
 - [x] Basic functionality.
-- [x] Option to skip pause.
+- [x] Option to skip pause (`-y`).
 - [ ] Only process down to given commit.
 - [ ] Option to use annotated/lightweight tags.
 - [ ] More intelligent handling of release title.
