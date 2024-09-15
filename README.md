@@ -35,6 +35,8 @@ Remember, **this is destructive**. It will delete the existing tag and create a 
 
 Annotated vs. lightweight might require some different strategies as lightweight doesn't have the same amount of data associated.
 
+Dry-run will also push as a dry-run. If the tags exist locally, it will output as if pushed to remote. If the tags don't exist locally because they weren't created during the dry-run, then it will likely just show `Everything up-to-date`.
+
 ## Features
 
 - [x] Basic functionality.

@@ -25,11 +25,12 @@ done
 if $prompt; then
     read -p "Check everything is correct, fix mistakes, then PRESS ENTER to continue."
 fi
+
+git push --tags $($noop && echo -e "\x2dn")
+
 if $noop; then
     exit
 fi
-
-git push --tags
 
 # Would be nice if we could grab only the newly created tags.
 git tag --list | while read -r tag; do
