@@ -6,7 +6,7 @@ A long, long time ago, I created a project, [biscottiHUD](https://github.com/Med
 
 The version pattern I used was this: `1.2`, `1.2a`, `1.2b`, `1.3` etc. Instead of a patch version, I appended letters. Sadly, it's not [semver](https://semver.org/) but what's done is done.
 
-Version commits can be searched for with this Regex pattern: `'^v?\d+(\.\d+){1,}-?[a-z]*'`. It also allows for more `.2.3` and a hyphen before letters, like `-alpha`.
+Version commits can be searched for with this Regex pattern: `'^v*\d+(\.\d+){1,}-?[a-z]*'`. It also allows for `v` prefix (several in case of typo), more `.2.3`, and a hyphen before letters, like `-alpha`.
 
 Script works like this:
 
