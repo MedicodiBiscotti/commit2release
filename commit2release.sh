@@ -13,10 +13,11 @@ pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest
 git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD | while read -r hash version rest; do
-    tag=$(echo "$version" | sed 's/^v*/v/')
+    tag=$(echo "$version" | sed '1s/^v*/v/')
+    msg=$(git rev-list --no-commit-header --no-walk --pretty='format:%B' $hash | sed '1s/^v*/v/')
     printf "%s: New tag %s  \t<- %s %s\n" $hash $tag $version "$rest"
     if ! $noop; then
-        git tag -f $tag $hash
+        git tag -f -m "$msg" $tag $hash
     fi
 done
 # Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
