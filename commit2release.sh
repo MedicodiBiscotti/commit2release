@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Options
-prompt=true;
-while getopts y opt; do
+noop=false
+prompt=true
+while getopts n,y opt; do
     case $opt in
+        n) noop=true;;
         y) prompt=false;;
     esac
 done
@@ -12,14 +14,19 @@ pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 # Iterate oldest to newest
 git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD | while read -r hash version rest; do
     tag=$(echo "$version" | sed 's/^v*/v/')
-    printf "%s: New tag %s  \t<- %s %s\n" $hash $tag $version "$rest";
-    git tag -f $tag $hash;
+    printf "%s: New tag %s  \t<- %s %s\n" $hash $tag $version "$rest"
+    if ! $noop; then
+        git tag -f $tag $hash
+    fi
 done
 # Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
 
 # When first writing the commits, I got some of the versions wrong. Fix manually at this stage.
 if $prompt; then
     read -p "Check everything is correct, fix mistakes, then PRESS ENTER to continue."
+fi
+if $noop; then
+    exit
 fi
 
 git push --tags

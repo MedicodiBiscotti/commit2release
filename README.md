@@ -39,6 +39,7 @@ Annotated vs. lightweight might require some different strategies as lightweight
 
 - [x] Basic functionality.
 - [x] Option to skip pause (`-y`).
+- [x] Option to dry-run (`-n`).
 - [ ] Only process down to given commit.
 - [ ] Option to use annotated/lightweight tags.
 - [ ] More intelligent handling of release title.
