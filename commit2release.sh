@@ -7,12 +7,12 @@ while getopts y opt; do
     esac
 done
 
-pattern='^v?\d+(\.\d+){1,}-?[a-z]*'
+pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest
 git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD | while read -r hash version rest; do
-    tag=v$version
     printf "%s: %s\t  ...\tCreating tag: %s\n" $hash $version $tag;
+    tag=$(echo "$version" | sed 's/^v*/v/')
     git tag -f $tag $hash;
 done
 # Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
