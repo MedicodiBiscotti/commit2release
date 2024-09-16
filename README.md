@@ -37,14 +37,18 @@ Annotated vs. lightweight might require some different strategies as lightweight
 
 Dry-run will also push as a dry-run. If the tags exist locally, it will output as if pushed to remote. If the tags don't exist locally because they weren't created during the dry-run, then it will likely just show `Everything up-to-date`.
 
+Stopping at specified commit works by using `rev-list HEAD ^<commit-ish>^` and `for-each-ref --contains=<commit-ish>`. These commands work in opposite directions, so to get them to include the same commit, `rev-list` has to look at the parent which is then excluded along with its parents, but the child (our target) and later history is included. `--contains` looks for descendants while `rev-list` looks for ancestors which are opposite operations, and both exclude the target in their exclusion modes, leading to "off-by-1" errors when using both together. So `rev-list` has to look at target's parent so that the target is not excluded.
+
+As far as I understand, `--contains` loops all refs and traverses each ones whole history to see if it ever includes the target. This is due to the directionality of commits having a parent chain but no access to its direct children. For large repos with many refs and long histories, this is potentially computationally expensive. This is only used when necessary when limiting commit traversal to only create releases for the tags just created.
+
 ## Features
 
 - [x] Basic functionality.
 - [x] Option to skip pause (`-y`).
 - [x] Option to dry-run (`-n`).
 - [x] Option to use annotated/lightweight tags (`-a`/`-l`).
+- [x] Only process down to given commit (`-s`).
 - [x] More intelligent handling of release title.
-- [ ] Only process down to given commit.
 
 ## Requirements
 

@@ -3,19 +3,22 @@
 noop=false
 prompt=true
 lightweight=false
-while getopts l,a,n,y opt; do
+while getopts l,a,n,y,s: opt; do
     case $opt in
         a) lightweight=false;;
         l) lightweight=true;;
         n) noop=true;;
+        s) stop=$OPTARG;;
         y) prompt=false;;
+        :) exit 1;;
+        *) exit 1;;
     esac
 done
 
 pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest
-git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD | while read -r hash version rest; do
+git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^") | while read -r hash version rest; do
     tag=$(echo "$version" | sed '1s/^v*/v/')
 
     # Still want msg set in dry-runs.
@@ -50,11 +53,14 @@ if $noop; then
     exit
 fi
 
-# Would be nice if we could grab only the newly created tags.
 # Could do different format (not get subject and not fix prefix) unless it's lightweight
 # This works fine, is simple, and doesn't rely on gh's default behaviour for reliable titles.
 # Would *barely* make a performance difference.
-git for-each-ref --format='%(refname:strip=2) %(subject)' refs/tags | while read -r tag sub; do
+
+# If $stop, use --contains. Performance impact due to how it traverses commit history, so only use then.
+# This effectively only selects tags that were just created.
+# Unless you point to commit with existing tag that doesn't match message pattern.
+git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags | while read -r tag sub; do
     # Prefixes version subject with v for the title.
     # If annotated tag, this has already been done, but not on lightweight.
     sub=$(echo "$sub" | sed '1s/^v*/v/')
