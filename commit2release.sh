@@ -51,6 +51,12 @@ if $noop; then
 fi
 
 # Would be nice if we could grab only the newly created tags.
-git tag --list | while read -r tag; do
-    gh release create $tag --notes-from-tag
+# Could do different format (not get subject and not fix prefix) unless it's lightweight
+# This works fine, is simple, and doesn't rely on gh's default behaviour for reliable titles.
+# Would *barely* make a performance difference.
+git for-each-ref --format='%(refname:strip=2) %(subject)' refs/tags | while read -r tag sub; do
+    # Prefixes version subject with v for the title.
+    # If annotated tag, this has already been done, but not on lightweight.
+    sub=$(echo "$sub" | sed '1s/^v*/v/')
+    gh release create $tag --notes-from-tag -t "$sub"
 done

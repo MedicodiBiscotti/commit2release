@@ -42,9 +42,9 @@ Dry-run will also push as a dry-run. If the tags exist locally, it will output a
 - [x] Basic functionality.
 - [x] Option to skip pause (`-y`).
 - [x] Option to dry-run (`-n`).
+- [x] Option to use annotated/lightweight tags (`-a`/`-l`).
+- [x] More intelligent handling of release title.
 - [ ] Only process down to given commit.
-- [ ] Option to use annotated/lightweight tags.
-- [ ] More intelligent handling of release title.
 
 ## Requirements
 
