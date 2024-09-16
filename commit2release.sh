@@ -19,7 +19,7 @@ pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest.
 orig_commits=$(git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^"))
-versions=$(echo "$orig_commits" | cut -d " " -f2 | sed 's/^v*/v/')
+versions=$(echo "$orig_commits" | awk '{sub(/^v*/, "v", $2); print $2}')
 
 echo "$orig_commits" | while read -r hash sub && read -r tag <&3; do
     # Still want msg set in dry-runs.
