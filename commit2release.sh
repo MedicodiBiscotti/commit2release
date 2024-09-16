@@ -17,8 +17,10 @@ done
 
 pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
-# Iterate oldest to newest
+# Iterate oldest to newest.
 git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^") | while read -r hash version rest; do
+    # Like below, we can do this in the pipeline before the loop.
+    # More efficient but you lose access to the original commit header for printing.
     tag=$(echo "$version" | sed '1s/^v*/v/')
 
     # Still want msg set in dry-runs.
@@ -49,11 +51,12 @@ fi
 
 git push --tags $($noop && echo -e "\x2dn")
 
+# Could be in loop below yo just prevent release.
 if $noop; then
     exit
 fi
 
-# Could do different format (not get subject and not fix prefix) unless it's lightweight
+# Could do different format (not get subject and not fix prefix) unless it's lightweight.
 # This works fine, is simple, and doesn't rely on gh's default behaviour for reliable titles.
 # Would *barely* make a performance difference.
 
@@ -63,6 +66,7 @@ fi
 git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags | while read -r tag sub; do
     # Prefixes version subject with v for the title.
     # If annotated tag, this has already been done, but not on lightweight.
+    # Can also be done as part of pipeline before going into loop.
     sub=$(echo "$sub" | sed '1s/^v*/v/')
     gh release create $tag --notes-from-tag -t "$sub"
 done
