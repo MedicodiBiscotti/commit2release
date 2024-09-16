@@ -18,17 +18,16 @@ done
 pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest.
-git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^") | while read -r hash version rest; do
-    # Like below, we can do this in the pipeline before the loop.
-    # More efficient but you lose access to the original commit header for printing.
-    tag=$(echo "$version" | sed '1s/^v*/v/')
+orig_commits=$(git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^"))
+versions=$(echo "$orig_commits" | cut -d " " -f2 | sed 's/^v*/v/')
 
+echo "$orig_commits" | while read -r hash sub && read -r tag <&3; do
     # Still want msg set in dry-runs.
     if ! $lightweight; then
         msg=$(git rev-list --no-commit-header --no-walk --pretty='format:%B' $hash | sed '1s/^v*/v/')
     fi
 
-    printf "%s: New tag %s  \t<- %s %s\n" $hash $tag $version "$rest"
+    printf "%s: New tag %s  \t<- %s\n" $hash $tag "$sub"
     
     if ! $noop; then
         # Really annoying that the tag command won't play nice both being lightweight and not.
@@ -40,9 +39,9 @@ git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$patter
         else
             git tag -f $tag $hash
         fi
+        # Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
     fi
-done
-# Force will overwrite tags, i.e. the latest with version in commit message gets the tag.
+done 3<<< "$versions"
 
 # When first writing the commits, I got some of the versions wrong. Fix manually at this stage.
 if $prompt; then
