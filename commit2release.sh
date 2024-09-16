@@ -50,11 +50,6 @@ fi
 
 git push --tags $($noop && echo -e "\x2dn")
 
-# Could be in loop below yo just prevent release.
-if $noop; then
-    exit
-fi
-
 # Could do different format (not get subject and not fix prefix) unless it's lightweight.
 # This works fine, is simple, and doesn't rely on gh's default behaviour for reliable titles.
 # Would *barely* make a performance difference.
@@ -67,5 +62,7 @@ git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo 
     # If annotated tag, this has already been done, but not on lightweight.
     # Can also be done as part of pipeline before going into loop.
     sub=$(echo "$sub" | sed '1s/^v*/v/')
-    gh release create $tag --notes-from-tag -t "$sub"
+    if ! $noop; then
+        gh release create $tag --notes-from-tag -t "$sub"
+    fi
 done
