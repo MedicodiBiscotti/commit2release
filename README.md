@@ -35,6 +35,8 @@ Remember, **this is destructive**. It will delete the existing tag and create a 
 
 Annotated vs. lightweight might require some different strategies as lightweight doesn't have the same amount of data associated.
 
+Annotated tags is the default and `-a` takes precedence over `-l` if both are supplied.
+
 Dry-run will also push as a dry-run. If the tags exist locally, it will output as if pushed to remote. If the tags don't exist locally because they weren't created during the dry-run, then it will likely just show `Everything up-to-date`.
 
 Stopping at specified commit works by using `rev-list HEAD ^<commit-ish>^` and `for-each-ref --contains=<commit-ish>`. These commands work in opposite directions, so to get them to include the same commit, `rev-list` has to look at the parent which is then excluded along with its parents, but the child (our target) and later history is included. `--contains` looks for descendants while `rev-list` looks for ancestors which are opposite operations, and both exclude the target in their exclusion modes, leading to "off-by-1" errors when using both together. So `rev-list` has to look at target's parent so that the target is not excluded.
