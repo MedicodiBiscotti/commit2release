@@ -24,7 +24,7 @@ Git lists tags in alphabetical order, so if your commits' versions are out of or
 By default, the script pauses to let you inspect the tags it created and make sure everything is correct before continuing. One thing to fix is tag names or which commits are tagged. Another is the tag message if annotated. Editing a tag in place is not possible, but this alias is a close approximation. It creates a new tag with the message of the old one, opening it in the default text editor for you to edit further.
 
 ```shell
-git config --global alias.te '!git tag -l --format='%(contents)' $1 | git tag -aefF - $1 && :'
+git config --global alias.te '!git tag -l --format='%(contents)' $1 | git tag -aefF - $1 $1^{} && :'
 ```
 
 If script outputs `Updated tag '<version> (was <hash>)` then it overwrote an existing tag. It's possible that you have multiple commits with the same version which needs fixing. If using annotated tags and rerunning the script, this will always be the case as it creates a new object every time, so it's less indicative then.
