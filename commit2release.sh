@@ -50,18 +50,19 @@ fi
 
 git push --tags $($noop && echo -e "\x2dn")
 
-# Could do different format (not get subject and not fix prefix) unless it's lightweight.
-# This works fine, is simple, and doesn't rely on gh's default behaviour for reliable titles.
-# Would *barely* make a performance difference.
-
 # If $stop, use --contains. Performance impact due to how it traverses commit history, so only use then.
 # This effectively only selects tags that were just created.
 # Unless you point to commit with existing tag that doesn't match message pattern.
-git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags | while read -r tag sub; do
-    # Prefixes version subject with v for the title.
-    # If annotated tag, this has already been done, but not on lightweight.
-    # Can also be done as part of pipeline before going into loop.
-    sub=$(echo "$sub" | sed '1s/^v*/v/')
+
+# We grab subject to set a consistent release title without relying on gh's default behavior.
+# If lightweight, the default would screw us over because the format of the commit message doesn't match the tag.
+tags=$(git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags)
+if $lightweight; then
+    # If annotated, prefix is already fixed in tag message, but not for lightweight's commit message.
+    # Could also use same awk as above but print $0.
+    tags=$(echo "$tags" | sed -E 's/^(\w*\s+)v*/\1v/')
+fi
+echo "$tags" | while read -r tag sub; do
     if ! $noop; then
         gh release create $tag --notes-from-tag -t "$sub"
     fi
