@@ -56,3 +56,19 @@ As far as I understand, `--contains` loops all refs and traverses each ones whol
 
 - `git`
 - `gh` [GitHub CLI](https://cli.github.com/)
+
+## Things I learned
+
+Just a little list of things I learned over the course of making this script.
+
+- Shell scripting
+- Bashisms
+- Unix CLI text processing tools
+  - `awk`
+  - `sed`
+  - `cut`
+- Git internal plumbing commands
+  - `rev-list`
+  - `for-each-ref`
+  - Format syntax to select specific data about the objects.
+- Default behavior for GitHub release title generation based on contents of text body.
