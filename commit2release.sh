@@ -18,7 +18,7 @@ done
 pattern='^v*\d+(\.\d+){1,}-?[a-z]*'
 
 # Iterate oldest to newest.
-orig_commits=$(git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep=$pattern -P HEAD $([ "$stop" ] && echo "^$stop^"))
+orig_commits=$(git rev-list --reverse --no-commit-header --pretty='format:%H %s' --grep="$pattern" -P HEAD $([ "$stop" ] && echo "^$stop^"))
 versions=$(echo "$orig_commits" | awk '{sub(/^v*/, "v", $2); print $2}')
 
 echo "$orig_commits" | while read -r hash sub && read -r tag <&3; do
@@ -56,7 +56,9 @@ git push --tags $($noop && echo -e "\x2dn")
 
 # We grab subject to set a consistent release title without relying on gh's default behavior.
 # If lightweight, the default would screw us over because the format of the commit message doesn't match the tag.
-tags=$(git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags)
+
+# Filter to the version pattern with grep. Alternative is "refs/tags/v*" glob, but that's not regex and also grabs misc. tags starting with "v".
+tags=$(git for-each-ref --format='%(refname:strip=2) %(subject)' $([ "$stop" ] && echo "--contains=$stop") refs/tags | grep -P "$pattern")
 if $lightweight; then
     # If annotated, prefix is already fixed in tag message, but not for lightweight's commit message.
     # Could also use same awk as above but print $0.
